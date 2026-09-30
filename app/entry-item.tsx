@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import type { Entry } from "@/lib/entries";
+import { useEffect, useState } from "react";
+import { MAX_MESSAGE_LENGTH, type Entry } from "@/lib/entries";
+import { colorForName } from "@/lib/avatar-color";
+import { formatRelativeTime } from "@/lib/time";
 
 type Mode = "view" | "edit" | "delete";
 
@@ -10,6 +12,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   wrong_password: "비밀번호가 일치하지 않습니다.",
   not_found: "이미 삭제된 글입니다.",
   invalid_body: "입력값을 확인해주세요.",
+  message_too_long: `메시지는 ${MAX_MESSAGE_LENGTH}자 이내로 입력해주세요.`,
 };
 
 export function EntryItem({ entry }: { entry: Entry }) {
@@ -19,6 +22,16 @@ export function EntryItem({ entry }: { entry: Entry }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [timeLabel, setTimeLabel] = useState(() =>
+    new Date(entry.created_at).toLocaleString("ko-KR"),
+  );
+
+  useEffect(() => {
+    const update = () => setTimeLabel(formatRelativeTime(entry.created_at));
+    update();
+    const id = setInterval(update, 60_000);
+    return () => clearInterval(id);
+  }, [entry.created_at]);
 
   function cancel() {
     setMode("view");
@@ -75,10 +88,23 @@ export function EntryItem({ entry }: { entry: Entry }) {
 
   return (
     <li className="rounded-lg border border-black/10 p-4 dark:border-white/10">
-      <div className="flex items-baseline justify-between gap-2">
-        <span className="font-medium">{entry.name}</span>
-        <time className="text-xs text-black/50 dark:text-white/50">
-          {new Date(entry.created_at).toLocaleString("ko-KR")}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
+            style={{ backgroundColor: colorForName(entry.name) }}
+          >
+            {entry.name.trim().charAt(0).toUpperCase()}
+          </span>
+          <span className="font-medium">{entry.name}</span>
+        </div>
+        <time
+          dateTime={entry.created_at}
+          title={new Date(entry.created_at).toLocaleString("ko-KR")}
+          className="text-xs text-black/50 dark:text-white/50"
+        >
+          {timeLabel}
         </time>
       </div>
 
@@ -102,8 +128,12 @@ export function EntryItem({ entry }: { entry: Entry }) {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={3}
+            maxLength={MAX_MESSAGE_LENGTH}
             className="rounded border border-black/15 px-3 py-2 text-sm dark:border-white/15 dark:bg-transparent"
           />
+          <p className="-mt-1 self-end text-xs text-black/40 dark:text-white/40">
+            {message.length}/{MAX_MESSAGE_LENGTH}
+          </p>
           <input
             type="password"
             placeholder="비밀번호"

@@ -2,6 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH } from "@/lib/entries";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  name_too_long: `이름은 ${MAX_NAME_LENGTH}자 이내로 입력해주세요.`,
+  message_too_long: `메시지는 ${MAX_MESSAGE_LENGTH}자 이내로 입력해주세요.`,
+};
 
 export function GuestbookForm() {
   const router = useRouter();
@@ -25,7 +31,8 @@ export function GuestbookForm() {
     setSubmitting(false);
 
     if (!res.ok) {
-      setError("이름, 메시지, 비밀번호를 모두 입력해주세요.");
+      const body = await res.json().catch(() => ({}));
+      setError(ERROR_MESSAGES[body.error] ?? "이름, 메시지, 비밀번호를 모두 입력해주세요.");
       return;
     }
 
@@ -46,6 +53,7 @@ export function GuestbookForm() {
           placeholder="이름"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          maxLength={MAX_NAME_LENGTH}
           className="flex-1 rounded border border-black/15 px-3 py-2 text-sm dark:border-white/15 dark:bg-transparent"
         />
         <input
@@ -61,8 +69,12 @@ export function GuestbookForm() {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rows={3}
+        maxLength={MAX_MESSAGE_LENGTH}
         className="rounded border border-black/15 px-3 py-2 text-sm dark:border-white/15 dark:bg-transparent"
       />
+      <p className="-mt-2 self-end text-xs text-black/40 dark:text-white/40">
+        {message.length}/{MAX_MESSAGE_LENGTH}
+      </p>
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button
         type="submit"

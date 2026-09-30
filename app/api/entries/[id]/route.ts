@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deleteEntry, updateEntryMessage } from "@/lib/entries";
+import { deleteEntry, updateEntryMessage, validateMessage } from "@/lib/entries";
 
 function statusFor(result: "not_found" | "wrong_password" | "ok") {
   if (result === "not_found") return 404;
@@ -15,8 +15,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   }
 
   const { message, password } = body as Record<string, unknown>;
-  if (typeof message !== "string" || typeof password !== "string" || !message.trim() || !password) {
+  if (typeof message !== "string" || typeof password !== "string" || !password) {
     return NextResponse.json({ error: "invalid_body" }, { status: 400 });
+  }
+
+  const messageError = validateMessage(message);
+  if (messageError) {
+    return NextResponse.json({ error: messageError }, { status: 400 });
   }
 
   const result = await updateEntryMessage(id, message.trim(), password);
