@@ -2,7 +2,13 @@ export type Entry = {
   id: string;
   name: string;
   message: string;
+  like_count: number;
   created_at: string;
+};
+
+export type EntryStats = {
+  total: number;
+  today: number;
 };
 
 export type EntryValidationError =

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH } from "@/lib/entry-rules";
+import { emitToast } from "@/lib/toast-bus";
 
 const ERROR_MESSAGES: Record<string, string> = {
   name_too_long: `이름은 ${MAX_NAME_LENGTH}자 이내로 입력해주세요.`,
@@ -16,12 +17,6 @@ export function GuestbookForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-
-  function celebrate() {
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2500);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,20 +40,15 @@ export function GuestbookForm() {
     setName("");
     setMessage("");
     setPassword("");
-    celebrate();
+    emitToast("작성되었습니다 ✓");
     router.refresh();
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative flex flex-col gap-3 rounded-lg border border-black/10 p-4 dark:border-white/10"
+      className="flex flex-col gap-3 rounded-lg border border-black/10 p-4 dark:border-white/10"
     >
-      {showToast && (
-        <div className="toast fixed bottom-6 right-6 z-50 rounded-lg bg-black px-4 py-2.5 text-sm text-white shadow-lg dark:bg-white dark:text-black">
-          작성되었습니다 ✓
-        </div>
-      )}
       <div className="flex gap-3">
         <input
           type="text"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
+import { ToastHost } from "./toast-host";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <footer className="border-t border-black/10 py-4 text-center text-sm text-black/60 dark:border-white/10 dark:text-white/60">
           허재형 · 202204160
         </footer>
+        <ToastHost />
       </body>
     </html>
   );

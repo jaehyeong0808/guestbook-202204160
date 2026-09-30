@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { MAX_MESSAGE_LENGTH, type Entry } from "@/lib/entry-rules";
 import { colorForName } from "@/lib/avatar-color";
 import { formatRelativeTime } from "@/lib/time";
+import { emitToast } from "@/lib/toast-bus";
 
 type Mode = "view" | "edit" | "delete";
 
@@ -25,6 +26,8 @@ export function EntryItem({ entry }: { entry: Entry }) {
   const [timeLabel, setTimeLabel] = useState(() =>
     new Date(entry.created_at).toLocaleString("ko-KR"),
   );
+  const [likeCount, setLikeCount] = useState(entry.like_count);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     const update = () => setTimeLabel(formatRelativeTime(entry.created_at));
@@ -32,6 +35,28 @@ export function EntryItem({ entry }: { entry: Entry }) {
     const id = setInterval(update, 60_000);
     return () => clearInterval(id);
   }, [entry.created_at]);
+
+  useEffect(() => {
+    try {
+      setLiked(localStorage.getItem(`liked:${entry.id}`) === "1");
+    } catch {
+      // ignore
+    }
+  }, [entry.id]);
+
+  async function handleLike() {
+    if (liked) return;
+    const res = await fetch(`/api/entries/${entry.id}/like`, { method: "POST" });
+    if (!res.ok) return;
+    const data = (await res.json()) as { like_count: number };
+    setLikeCount(data.like_count);
+    setLiked(true);
+    try {
+      localStorage.setItem(`liked:${entry.id}`, "1");
+    } catch {
+      // ignore
+    }
+  }
 
   function cancel() {
     setMode("view");
@@ -61,6 +86,7 @@ export function EntryItem({ entry }: { entry: Entry }) {
 
     setMode("view");
     setPassword("");
+    emitToast("수정되었습니다 ✓");
     router.refresh();
   }
 
@@ -83,6 +109,7 @@ export function EntryItem({ entry }: { entry: Entry }) {
       return;
     }
 
+    emitToast("삭제되었습니다 ✓");
     router.refresh();
   }
 
@@ -111,7 +138,16 @@ export function EntryItem({ entry }: { entry: Entry }) {
       {mode === "view" && (
         <>
           <p className="mt-2 whitespace-pre-wrap text-sm">{entry.message}</p>
-          <div className="mt-3 flex gap-3 text-xs text-black/50 dark:text-white/50">
+          <div className="mt-3 flex items-center gap-3 text-xs text-black/50 dark:text-white/50">
+            <button
+              onClick={handleLike}
+              disabled={liked}
+              aria-pressed={liked}
+              className="flex items-center gap-1 disabled:opacity-100"
+            >
+              <span>{liked ? "❤️" : "🤍"}</span>
+              <span>{likeCount}</span>
+            </button>
             <button onClick={() => setMode("edit")} className="underline">
               수정
             </button>
