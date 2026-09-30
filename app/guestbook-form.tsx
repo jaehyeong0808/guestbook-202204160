@@ -16,6 +16,12 @@ export function GuestbookForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  function celebrate() {
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,14 +45,20 @@ export function GuestbookForm() {
     setName("");
     setMessage("");
     setPassword("");
+    celebrate();
     router.refresh();
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-lg border border-black/10 p-4 dark:border-white/10"
+      className="relative flex flex-col gap-3 rounded-lg border border-black/10 p-4 dark:border-white/10"
     >
+      {showToast && (
+        <div className="toast fixed bottom-6 right-6 z-50 rounded-lg bg-black px-4 py-2.5 text-sm text-white shadow-lg dark:bg-white dark:text-black">
+          작성되었습니다 ✓
+        </div>
+      )}
       <div className="flex gap-3">
         <input
           type="text"

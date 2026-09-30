@@ -87,7 +87,7 @@ export function EntryItem({ entry }: { entry: Entry }) {
   }
 
   return (
-    <li className="rounded-lg border border-black/10 p-4 dark:border-white/10">
+    <li className="rounded-lg border border-black/10 p-4 transition-shadow hover:shadow-md hover:shadow-black/5 dark:border-white/10 dark:hover:shadow-white/5">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span
