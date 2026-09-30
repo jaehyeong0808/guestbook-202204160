@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MAX_MESSAGE_LENGTH, type Entry } from "@/lib/entries";
+import { MAX_MESSAGE_LENGTH, type Entry } from "@/lib/entry-rules";
 import { colorForName } from "@/lib/avatar-color";
 import { formatRelativeTime } from "@/lib/time";
 

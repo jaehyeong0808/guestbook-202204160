@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH } from "@/lib/entries";
+import { MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH } from "@/lib/entry-rules";
 
 const ERROR_MESSAGES: Record<string, string> = {
   name_too_long: `이름은 ${MAX_NAME_LENGTH}자 이내로 입력해주세요.`,

@@ -1,4 +1,4 @@
-import type { Entry } from "@/lib/entries";
+import type { Entry } from "@/lib/entry-rules";
 import { EntryItem } from "./entry-item";
 
 export function EntryList({ entries }: { entries: Entry[] }) {
