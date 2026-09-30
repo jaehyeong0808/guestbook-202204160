@@ -81,7 +81,7 @@ export function GuestbookForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="self-end rounded bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-white dark:text-black"
+        className="self-end rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-400"
       >
         {submitting ? "등록 중..." : "남기기"}
       </button>

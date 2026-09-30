@@ -148,7 +148,10 @@ export function EntryItem({ entry }: { entry: Entry }) {
               <span>{liked ? "❤️" : "🤍"}</span>
               <span>{likeCount}</span>
             </button>
-            <button onClick={() => setMode("edit")} className="underline">
+            <button
+              onClick={() => setMode("edit")}
+              className="text-indigo-600 underline dark:text-indigo-400"
+            >
               수정
             </button>
             <button onClick={() => setMode("delete")} className="underline">
@@ -185,7 +188,7 @@ export function EntryItem({ entry }: { entry: Entry }) {
             <button
               type="submit"
               disabled={submitting}
-              className="rounded bg-black px-3 py-1.5 text-sm text-white disabled:opacity-50 dark:bg-white dark:text-black"
+              className="rounded bg-indigo-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-indigo-700 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-400"
             >
               저장
             </button>
